@@ -1,0 +1,183 @@
+ <!DOCTYPE html>
+    <html>
+    <head>
+        <title>test</title>
+        <script type="text/javascript" src="d3.v6.js"></script>
+        <script type="text/javascript" src="montana.js"></script>
+<style>
+    body{
+        font-family:helvetica;
+    }
+    #main{
+        width:95%;
+        height:100%;
+        display:inline-block;
+        vertical-align:top;
+        padding:10px;
+        margin:2%;
+        column-count: 8;
+        column-gap: 40px;
+        column-rule: 1px black solid;
+    }
+    .subheading {
+      font-size:18px;
+      font-weight:700;
+      display:inline-block;
+    }
+    .subheadingNumber {
+      font-size:8px;
+      font-weight:700;
+      display:inline-block;
+    }
+    .content {
+     font-size:3px;
+      display:inline-block;
+      line-height: 100%;
+    }
+    p{
+     display:inline-block;
+     padding:0px;
+     padding-left:10px;
+    }
+/*   
+    .notAmended{
+    background-color:#aaa;}
+
+    .amended{
+    background-color:gold;} */
+    .subSectionNumber{
+        font-size:3px;
+        line-height:100%;
+
+    }
+    .subSectionTitle{
+        font-size:3px;   
+        font-weight:700;
+                line-height:100%;
+
+}
+
+    .subSectionText{
+        font-size:3px;   
+        line-height:100%;
+    }
+    #mouseover{
+        width:200px;
+        background-color: rgba(255,255,255,.95);
+        border:1px solid black;
+        padding:10px;
+        font-size:11px;
+        position:absolute;
+        visibility:hidden;
+    }
+    #title{
+        font-size:24px;
+        font-weight:700;
+        
+    }
+</style>
+
+    </head>
+    <body>
+        <div id = "title">Montana<br>State Constitution Amendments</div>
+        <div id = "key"></div>
+        <div id = "main"></div>
+        <div id = "mouseover">text</div>
+        <script>
+            console.log(montana)
+            var colorScale = d3.scaleLinear().domain([1800,1970,1980,1990,2000,2010,2020])
+            .range(["#ccc","#C3DEEB","#9FCDE0","#6CBAD6","#3995B2","#007194","#00415B"])
+            
+            
+                var key = d3.select("#key").append("svg").attr("width",600).attr("height",40)
+                var rectW = 80
+                key.selectAll("rect").data(colorScale.domain())
+                .enter()
+                .append("rect")
+                .attr("x",function(d,i){return i*rectW})
+                .attr("y",20)
+                .attr("width",rectW-1)
+                .attr("height",10)
+                .attr("fill",function(d,i){
+                    return colorScale.range()[i]
+                })
+                 key.selectAll("text").data(colorScale.domain())
+                .enter()
+                .append("text")
+                .attr("x",function(d,i){return i*rectW})
+                .attr("y",18)
+                .style("font-size",11)
+                .text(function(d,i){
+                    if(d==1800){
+                        return "Unchanged"
+                    }return d+"s"
+                })
+
+            
+            var section = d3.select("#main")
+            for(var i in montana){
+                //console.log(montana[i])//.append("div").attr("class","section")
+                var subsection = section.append("div")
+
+                subsection.append("div").attr("class","subheadingNumber")
+                .html(montana[i].article)
+                
+                subsection.append("div").attr("class","subheading")
+                .html(montana[i].title)
+
+                for(var t in montana[i].text){
+                    var subSectionNumber = montana[i].text[t].section
+                    var subSectionTitle = montana[i].text[t].sectionTitle
+                    var subSectionText = montana[i].text[t].secText
+                    
+                        if(montana[i].text[t].lastAmended!=undefined){
+                            var year = montana[i].text[t].lastAmended
+                            var color = colorScale(year)
+                    if(subSectionTitle!=undefined){
+                            subsection.append("div").attr("class","amended subSectionNumber item")
+                            .html(subSectionNumber).style("color",color).attr("year",year)
+                            subsection.append("div").attr("class","amended subSectionTitle item")
+                            .html(subSectionTitle).style("color",color).attr("year",year)
+                    }
+                            subsection.append("div").attr("class","amended subSectionText item")
+                            .html(subSectionText).style("color",color).attr("year",year)
+        
+                        }else{
+
+                    if(subSectionTitle!=undefined){
+                            var year = 1800
+                            var color = colorScale(year)
+
+                            subsection.append("div").attr("class","notAmended subSectionNumber item")
+                            .html(subSectionNumber).style("color",color).attr("year",year)
+
+                            subsection.append("div").attr("class","notAmended subSectionTitle item")
+                            .html(subSectionTitle).style("color",color).attr("year",year)
+                    }
+                            subsection.append("div").attr("class","notAmended subSectionText item")
+                            .html(subSectionText).style("color",color).attr("year",year)
+                        }
+                    
+                    
+                }
+                
+
+                var item = d3.selectAll(".item").style("cursor","pointer")
+                .on("mouseover",function(e){
+                    var highlightText = d3.select(this).html()
+                    var year = d3.select(this).attr("year")
+                    var color = d3.select(this).style("color")
+                    d3.select("#mouseover").html("Last amended in "+year+"<br>"+highlightText).style("color",color)
+                    .style("left",(e.clientX+20)+"px")
+                    .style("top",e.clientY+"px")  
+                    .style("visibility","visible")                  
+                })
+                 .on("mouseout",function(e){
+                    d3.select("#mouseover")
+                    .style("visibility","hidden")                  
+                })
+
+            }
+        </script>
+    </body>
+    </html>
