@@ -167,7 +167,7 @@
                     var highlightText = d3.select(this).html()
                     var year = d3.select(this).attr("year")
                     var color = d3.select(this).style("color")
-                    if(year ==1800){
+                    if(year ==1800 || year ==null){
                         var amendText = ""
                     }else{
                       var amendText = "Last amended in "+year+"<br>"
