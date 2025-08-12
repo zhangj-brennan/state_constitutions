@@ -167,7 +167,12 @@
                     var highlightText = d3.select(this).html()
                     var year = d3.select(this).attr("year")
                     var color = d3.select(this).style("color")
-                    d3.select("#mouseover").html("Last amended in "+year+"<br>"+highlightText).style("color",color)
+                    if(year ==1800){
+                        var amendText = ""
+                    }else{
+                      var amendText = "Last amended in "+year+"<br>"
+                    }
+                    d3.select("#mouseover").html(amendText+highlightText).style("color",color)
                     .style("left",(e.clientX+20)+"px")
                     .style("top",e.clientY+"px")  
                     .style("visibility","visible")                  
