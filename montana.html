@@ -15,9 +15,9 @@
         vertical-align:top;
         padding:10px;
         margin:2%;
-        column-count: 8;
+        column-count: 6;
         column-gap: 40px;
-        column-rule: 1px black solid;
+        column-rule: 1px #000 solid;
     }
     .subheading {
       font-size:18px;
@@ -47,46 +47,52 @@
     background-color:gold;} */
     .subSectionNumber{
         font-size:3px;
-        line-height:100%;
+        line-height:200%;
+        text-decoration:underline;
+        text-decoration-thickness:3px; }
 
-    }
     .subSectionTitle{
         font-size:3px;   
-        font-weight:700;
-                line-height:100%;
-
+         line-height:200%;
+        text-decoration:underline;
+        text-decoration-thickness:3px;
 }
 
     .subSectionText{
-        font-size:3px;   
-        line-height:100%;
+        font-size:2px;   
+        line-height:200%;
+        text-decoration:underline;
+        text-decoration-thickness:3px;
     }
+
     #mouseover{
-        width:200px;
+        width:150px;
         background-color: rgba(255,255,255,.95);
         border:1px solid black;
         padding:10px;
-        font-size:11px;
+        font-size:14px;
         position:absolute;
         visibility:hidden;
     }
     #title{
         font-size:24px;
         font-weight:700;
-        
+        margin-left:40px;
     }
+    #key{margin-left:40px;}
 </style>
 
     </head>
     <body>
-        <div id = "title">Montana<br>State Constitution Amendments</div>
+        <div id = "title"><br> TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST<br><br>Montana<br>State Constitution Amendments</div>
         <div id = "key"></div>
         <div id = "main"></div>
         <div id = "mouseover">text</div>
         <script>
-            console.log(montana)
+           // console.log(montana)
             var colorScale = d3.scaleLinear().domain([1800,1970,1980,1990,2000,2010,2020])
-            .range(["#ccc","#C3DEEB","#9FCDE0","#6CBAD6","#3995B2","#007194","#00415B"])
+           // .range(["#555","#d7da4b","#62d8ab","#77db43","#9ea147","#95df83","#4f9549"])
+            .range(["#DBDADA","#B7C9CE","#92B7C3","#6EA6B7","#4994AB","#2583A0","#007194"])
             
             
                 var key = d3.select("#key").append("svg").attr("width",600).attr("height",40)
@@ -106,7 +112,7 @@
                 .append("text")
                 .attr("x",function(d,i){return i*rectW})
                 .attr("y",18)
-                .style("font-size",11)
+                .style("font-size",12)
                 .text(function(d,i){
                     if(d==1800){
                         return "Unchanged"
@@ -132,49 +138,58 @@
                     
                         if(montana[i].text[t].lastAmended!=undefined){
                             var year = montana[i].text[t].lastAmended
-                            var color = colorScale(year)
-                    if(subSectionTitle!=undefined){
+
+                            var color = colorScale(year).replace(")",",0)")
+                            var decColor = colorScale(year)
+                                                if(subSectionTitle!=undefined){
                             subsection.append("div").attr("class","amended subSectionNumber item")
-                            .html(subSectionNumber).style("color",color).attr("year",year)
+                            .html(subSectionNumber).style("color",color).attr("year",year).style("text-decoration-color",decColor)
                             subsection.append("div").attr("class","amended subSectionTitle item")
-                            .html(subSectionTitle).style("color",color).attr("year",year)
+                            .html(subSectionTitle).style("color",color).attr("year",year).style("text-decoration-color",decColor)
+                                    
+
                     }
                             subsection.append("div").attr("class","amended subSectionText item")
                             .html(subSectionText).style("color",color).attr("year",year)
+                            .style("text-decoration-color",decColor)
         
                         }else{
 
-                    if(subSectionTitle!=undefined){
+                   // if(subSectionTitle!=undefined){
                             var year = 1800
-                            var color = colorScale(year)
+                            var color = colorScale(year).replace(")",",0)")
+                            var decColor = colorScale(year)
 
                             subsection.append("div").attr("class","notAmended subSectionNumber item")
-                            .html(subSectionNumber).style("color",color).attr("year",year)
+                            .html(subSectionNumber+" "+subSectionTitle).style("color",color).attr("year",year)                            
+                            .style("text-decoration-color",color)
 
-                            subsection.append("div").attr("class","notAmended subSectionTitle item")
-                            .html(subSectionTitle).style("color",color).attr("year",year)
-                    }
-                            subsection.append("div").attr("class","notAmended subSectionText item")
-                            .html(subSectionText).style("color",color).attr("year",year)
+
+                   // }
+                            subsection.append("div")
+                            .html(subSectionText).attr("class","notAmended subSectionText item")
+                            .style("color",color).attr("year",year)
+                            .style("text-decoration-color",decColor)
                         }
-                    
                     
                 }
                 
+
 
                 var item = d3.selectAll(".item").style("cursor","pointer")
                 .on("mouseover",function(e){
                     var highlightText = d3.select(this).html()
                     var year = d3.select(this).attr("year")
-                    var color = d3.select(this).style("color")
+                    var color = d3.select(this).style("text-decoration-color")//.replace(", 0)",")")
+                    console.log(color)
                     if(year ==1800 || year ==null){
                         var amendText = ""
                     }else{
-                      var amendText = "Last amended in "+year+"<br>"
+                      var amendText = "<b>Last amended in "+year+"<br><br></b>"
                     }
                     d3.select("#mouseover").html(amendText+highlightText).style("color",color)
-                    .style("left",(e.clientX+20)+"px")
-                    .style("top",e.clientY+"px")  
+                    .style("left",(e.clientX)+"px")
+                    .style("top",(e.clientY+20)+"px")  
                     .style("visibility","visible")                  
                 })
                  .on("mouseout",function(e){
