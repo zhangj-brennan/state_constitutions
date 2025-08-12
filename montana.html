@@ -9,7 +9,7 @@
         font-family:helvetica;
     }
     #main{
-        width:95%;
+        width:800px;
         height:100%;
         display:inline-block;
         vertical-align:top;
@@ -22,12 +22,10 @@
     .subheading {
       font-size:14px;
       font-weight:700;
-      line-height:150%;
-      display:inline-block;
+      line-height:120%;
     }
     .subheadingNumber {
       font-size:8px;
-      font-weight:700;
       display:inline-block;
     }
     .content {
@@ -67,11 +65,11 @@
     }
 
     #mouseover{
-        width:150px;
+        width:200px;
         background-color: rgba(255,255,255,.95);
         border:1px solid black;
         padding:10px;
-        font-size:14px;
+        font-size:11px;
         position:absolute;
         visibility:hidden;
     }
@@ -93,9 +91,9 @@
            // console.log(montana)
             var colorScale = d3.scaleLinear().domain([1800,1970,1980,1990,2000,2010,2020])
            // .range(["#555","#d7da4b","#62d8ab","#77db43","#9ea147","#95df83","#4f9549"])
-            .range(["#DBDADA","#B7C9CE","#92B7C3","#6EA6B7","#4994AB","#2583A0","#007194"])
-            
-            
+            .range(["#aaa","#B7C9CE","#92B7C3","#6EA6B7","#4994AB","#2583A0","#007194"])
+            //.range(["#000000","#2A0000","#550000","#800000","#AA0000","#D50000","#FF0000"])
+           // .range(["#B0B0B0","#BA9799","#C47F81","#CF666A","#D94D53","#E3353B","#ED1C24"])
                 var key = d3.select("#key").append("svg").attr("width",600).attr("height",40)
                 var rectW = 80
                 key.selectAll("rect").data(colorScale.domain())
