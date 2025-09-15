@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My D3 Page</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body{
+            font-size:12px;
+            font-family:sans-serif;
+            font-weight:100;
+        }
+        .item{width:500px; line-height:120%;}
+        .event{font-weight:700; font-size:16px;}
+    </style>
+</head>
+<body>
+    <h1>Election Security Timeline</h1>
+    <!-- <div id="a">a</div>
+    <div id="a">b</div>
+    <div id="a">c</div>
+    <div id="a">d</div> -->
+    <div id="timeline"></div>
+    <script>
+const googleSheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQSCVb7jXjqYIkp7AY3lkeamO8kMrEGgvA3cYr6yWTN0smiY49abYuwnn3o6MzaneCs96EFwcptUTpS/pub?gid=2092091165&single=true&output=csv";
+d3.csv(googleSheetCsvUrl)
+  .then(function(data) {
+
+    d3.select("#a").on("click",function(d){
+d3.selectAll(".item").style("opacity",.2)
+
+d3.selectAll(".a").style("opacity",1)
+    })
+    console.log(data);
+    var colors = {a:"#9E0B0F",b:"#ED1C24",c:"#007194",d:"#00415B"}
+
+    for(var i in data){
+
+        d3.select("#timeline")
+        .append("div")
+        .attr("class","item")
+        .attr("index",i)
+        .attr("class",function(){
+            return data[i].category+" item"
+        })
+        .html("<b>"+data[i].Date+"</b> "+data[i].Title)
+        .style("border-left","3px solid black")
+        .style("padding","5px")
+        .style("cursor","pointer")
+        // .style("color",function(){
+        //     return colors[data[i].category]
+        // })
+        .on("mouseover",function(){
+            var thisIndex=d3.select(this).attr("index")
+            var description = data[thisIndex].Description
+            d3.select(this).style("border-left","10px solid black").style("background-color","#FFCF01")
+
+
+            d3.select(this).html("<b>"+data[thisIndex].Date+"<br><br> </b><span class=\"event\">"+data[thisIndex].Title
+                +"</span><br>"+description
+            )
+              
+        })
+        .on("mouseout",function(){
+
+                d3.select(this)
+                .style("border","none")
+                .style("border-left","3px solid black").style("background-color","#FFF")
+
+            var thisIndex=d3.select(this).attr("index")
+            d3.select(this).html("<b>"+data[thisIndex].Date+"</b> "+data[thisIndex].Title
+            )//.style("color","black")
+        })
+    }
+
+
+  })
+  .catch(function(error) {
+    console.error("Error loading Google Sheet data:", error);
+  });
+    </script>
+</body>
+</html>
