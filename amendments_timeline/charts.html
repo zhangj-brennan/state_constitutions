@@ -14,7 +14,6 @@
     position:absolute;
     background-color:rgba(255,255,255,.9);
     width:300px;
-    height:100px;
     border:1px solid black;
     padding:5px;
     visibility:hidden;
@@ -37,6 +36,9 @@
     display:inline-block;
     margin:20px;
    }
+   #menu{
+    font-weight:700;
+   }
 </style>
 </head>
 <body>
@@ -46,11 +48,11 @@
     
     <h2>By State</h2>
 
-  <div id="menu">
+  <div id="menu">VIEW: 
   <div class="topicButton" id="barchartView">bar chart</div>
   <div class="topicButton" id="timelineView">timeline</div><br><br>
 </div>
-  <div id="topics"></div>
+  <div id="topics">FILTER: </div>
 <div id="info">more info</div><br><br>
   
 <div id="chart"></div>
@@ -93,16 +95,18 @@ d3.select("#topics").selectAll(".topicButton")
 .data(Object.keys(BOS_topic))
 .join("div").attr("class","topicButton")
 .html(function(d){return BOS_labels[d]})
-.on("mouseover",function(e,d){
+.on("click",function(e,d){
   d3.selectAll("rect").attr("opacity",.1)
   d3.selectAll("."+d.replace("/","_")).attr("opacity",1)
   d3.selectAll(".topicButton").style("color","black").style("background-color","white")
   d3.select(this).style("background-color","black").style("color","white")
 })
-.on("mouseout",function(e,d){
-    d3.selectAll("rect").attr("opacity",1)
-    d3.select(this).style("color","black").style("background-color","white")
-
+d3.select("#topics").append("div").attr("class","topicButton").html("ALL TOPICS")
+.style("background-color","black").style("color","white")
+.on("click",function(e,d){
+  d3.selectAll("rect").attr("opacity",1)
+  d3.selectAll(".topicButton").style("color","black").style("background-color","white")
+  d3.select(this).style("background-color","black").style("color","white")
 })
   //timeline of state amendments 1 for each state
   //color code for pass/fail
@@ -145,7 +149,8 @@ var bScale = d3.scaleLinear().domain([0,300]).range([0,300*barW])
 
   d3.select("#timelineView").on("click",function(){
   d3.select("#barAxis").remove()
-
+  d3.select("#barchartView").style("color","black").style("background-color","white")
+      d3.select(this).style("background-color","black").style("color","white")
 svg.append("g").attr("id","timelineAxis").attr("transform","translate(80,18)").call(timelineAxis)
   var rects = d3.selectAll(".amendment")
   .each(function(d,i){
@@ -155,8 +160,10 @@ svg.append("g").attr("id","timelineAxis").attr("transform","translate(80,18)").c
   })
   })
 
-  d3.select("#barchartView").on("click",function(){
+  d3.select("#barchartView").style("background-color","black").style("color","white").on("click",function(){
       svg.append("g").attr("id","barAxis").attr("transform","translate(80,20)").call(barAxis)
+      d3.select("#timelineView").style("color","black").style("background-color","white")
+      d3.select(this).style("background-color","black").style("color","white")
   d3.select("#timelineAxis").remove()
 
   var rects = d3.selectAll(".amendment")
@@ -220,9 +227,9 @@ chart.selectAll("."+state)
 .on("mouseover",function(e,d){
   d3.select(this).attr("stroke","black")
   //initiative,BOS_topic,BOS_summary,passed,notes
-  d3.select("#info").style("left",e["offsetX"]+20+"px").style("top",(e["offsetY"]+40)+"px").style("visibility","visible")
+  d3.select("#info").style("left",e["offsetX"]+20+"px").style("top",(e["offsetY"]+120)+"px").style("visibility","visible")
   d3.select("#info").html("State:"+d["state_postcode"]
-  +"<br><b>BOS_topic:</b> "+d["BOS_topic"]
+  +"<br>BOS_topic: "+d["BOS_topic"]
   +"<br>BOS_Summary: "+d["BOS_summary"]
   +"<br>passed: "+d["passed"]
   +"<br>year: "+d.year
