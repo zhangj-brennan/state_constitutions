@@ -149,8 +149,8 @@ var bScale = d3.scaleLinear().domain([0,300]).range([0,300*barW])
 
   d3.select("#timelineView").on("click",function(){
   d3.select("#barAxis").remove()
-  d3.select("#barchartView").style("color","black").style("background-color","white")
-      d3.select(this).style("background-color","black").style("color","white")
+//  d3.select("#barchartView").style("color","black").style("background-color","white")
+    //  d3.select(this).style("background-color","black").style("color","white")
 svg.append("g").attr("id","timelineAxis").attr("transform","translate(80,18)").call(timelineAxis)
   var rects = d3.selectAll(".amendment")
   .each(function(d,i){
@@ -160,10 +160,11 @@ svg.append("g").attr("id","timelineAxis").attr("transform","translate(80,18)").c
   })
   })
 
-  d3.select("#barchartView").style("background-color","black").style("color","white").on("click",function(){
+  d3.select("#barchartView")//.style("background-color","black").style("color","white")
+  .on("click",function(){
       svg.append("g").attr("id","barAxis").attr("transform","translate(80,20)").call(barAxis)
-      d3.select("#timelineView").style("color","black").style("background-color","white")
-      d3.select(this).style("background-color","black").style("color","white")
+    //  d3.select("#timelineView").style("color","black").style("background-color","white")
+    //  d3.select(this).style("background-color","black").style("color","white")
   d3.select("#timelineAxis").remove()
 
   var rects = d3.selectAll(".amendment")
