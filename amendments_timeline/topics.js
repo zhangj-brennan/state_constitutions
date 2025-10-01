@@ -1,0 +1,11 @@
+var BOS_topic = {
+"BOR":"(Bill of Rights) Abortion (parental notification, personhood amendments) Same-sex marriage bans and affirmations Eminent domain restrictions and reforms Victim rights and jury trial standards Affirmative action bans Right to hunt and fish Anti-health-care mandates Bail denial and judicial discretion Card-check and labor-related rights",
+"SUFF/ELECT":"(Suffrage & Elections) Redistricting reforms and independent commissions Voting rights (felon voting, age qualifications, citizenship requirements) Campaign finance regulations Voter ID laws Absentee and early voting provisions Initiative and referendum process changes Election administration and oversight",
+"EXEC":"(Executive Branch)",
+"LEG":"(Legislative Branch) Legislative term limits and salary rules Redistricting procedures Ethics commissions and transparency Legislative veto and emergency powers Session scheduling and bill filing rules",
+"JUD":"(Judicial Branch) Judicial conduct and eligibility Retirement age adjustments Judicial nomination and appointment processes Expansion of judicial duties and jurisdictions Bail and pretrial detention rules",
+"FIN":"(Finance & Taxation) Property tax exemptions and adjustments Budget rules and rainy day funds Sales and income tax changes Funding for education, transportation, and veterans Tax caps and homestead exemptions",
+"DEBT":"(State & Local Debt) Authorization of bonds for infrastructure, education, and conservation Economic development funding Debt classification and limitations Local government borrowing rules",
+"LOCAL":"(Local Government) Officeholding and term limits for local officials Local tax and bond measures Judicial appointments and school board governance Infrastructure and land use amendments County-specific amendments (e.g., toll roads, annexations)",
+"MISC":"(Miscellaneous) Legalization of marijuana and gambling Right to work and labor laws Environmental and land use provisions Civil service reforms Technical constitutional updates"
+}

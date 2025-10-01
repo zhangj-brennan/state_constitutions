@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+          <script type="text/javascript" src="d3.v7.min.js"></script>
+
+<style>
+  body{
+    font-family:sans-serif;
+  }
+  #title{
+    font-size:24px;
+  }
+   #info{
+    position:absolute;
+    background-color:rgba(255,255,255,.9);
+    width:300px;
+    height:100px;
+    border:1px solid black;
+    padding:5px;
+    visibility:hidden;
+   } 
+   .topicButton{
+    display:inline-block;
+    padding:5px;
+    padding-left:10px;
+    padding-right:10px;
+    margin:2px;
+    border:1px solid black;
+    font-size:12px;
+    font-weight:bold;
+    text-transform: uppercase;
+    letter-spacing:.5px;
+   }
+   #topics{font-weight:700;}
+   .overviewChart{
+    width:400px;
+    display:inline-block;
+    margin:20px;
+   }
+   .histo{display:inline-block; 
+       margin:20px;
+}
+</style>
+</head>
+<body>
+  <!-- <img src="Screenshot 2025-10-01 at 10.01.13 AM.png" width="100%" alt="Italian Trulli"> -->
+  <h1>State Constitution Amendments (Robinson)</h1>
+  <div>
+    <h2>By topic</h2>
+    <div class="overviewChart" id="count">
+<iframe title="# of Amendments Adopted vs. Not Adopted" aria-label="Stacked Bars" id="datawrapper-chart-5fwGo" src="https://datawrapper.dwcdn.net/5fwGo/3/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="415" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}})}();
+</script>
+ </div>
+    <div class="overviewChart" id="percent">
+      <iframe title="% of Amendments Adopted vs. Not Adopted" aria-label="Stacked Bars" id="datawrapper-chart-Jsgcf" src="https://datawrapper.dwcdn.net/Jsgcf/1/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="415" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}})}();
+</script>
+
+    </div>
+    <div id="histograms"></div>
+
+    <script>
+        Promise.all([d3.csv("amendments.csv")])
+        .then(function(d){
+            var topicDictionary = Object.groupBy(d[0],function(d){return d["BOS_topic"]})
+
+
+            for(var t in topicDictionary){
+                var byYear = Object.groupBy(topicDictionary[t],function(d){return d.year})
+                console.log(byYear)
+                console.log(t,"._"+t.replace("/",""))
+                var h= 100
+                var w = 400
+                var p =20
+                var xScale = d3.scaleLinear().domain([2004,2026]).range([0,200])
+                var xAxis =d3.axisBottom().scale(xScale).ticks(5).tickFormat(function(d){return d+""})
+                var years = Object.keys(byYear)
+                var svg = d3.select("#histograms").append("div").attr("class","histo").append("svg").attr("width",w).attr("height",h+p)
+                
+                svg.append("g").call(xAxis).attr("transform","translate(0,100)")
+                svg.append("text").text(t).attr("x",10).attr("y",20)
+                svg.selectAll("._"+t.replace("/",""))
+                .data(years)
+                .join("rect")
+                .attr("width",5)
+                .attr("height",function(d){
+                    return byYear[d].length
+                })
+                .attr("x",function(d,i){return xScale(d)})
+                .attr("y",function(d){
+                    return h-byYear[d].length
+                })
+            }
+        })
+
+
+    </script>
+        
+
+</body>
+</html>

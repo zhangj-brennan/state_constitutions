@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+          <script type="text/javascript" src="d3.v7.min.js"></script>
+
+<style>
+  body{
+    font-family:sans-serif;
+  }
+  #title{
+    font-size:24px;
+  }
+   #info{
+    position:absolute;
+    background-color:rgba(255,255,255,.9);
+    width:300px;
+    height:100px;
+    border:1px solid black;
+    padding:5px;
+    visibility:hidden;
+   } 
+   .topicButton{
+    display:inline-block;
+    padding:5px;
+    padding-left:10px;
+    padding-right:10px;
+    margin:2px;
+    border:1px solid black;
+    font-size:12px;
+    font-weight:bold;
+    text-transform: uppercase;
+    letter-spacing:.5px;
+   }
+   #topics{font-weight:700;}
+   .overviewChart{
+    width:400px;
+    display:inline-block;
+    margin:20px;
+   }
+</style>
+</head>
+<body>
+  <!-- <img src="Screenshot 2025-10-01 at 10.01.13 AM.png" width="100%" alt="Italian Trulli"> -->
+  <h1>State Constitution Amendments (Robinson)</h1>
+
+    
+    <h2>By State</h2>
+
+  <div id="menu">
+  <div class="topicButton" id="barchartView">bar chart</div>
+  <div class="topicButton" id="timelineView">timeline</div><br><br>
+</div>
+  <div id="topics"></div>
+<div id="info">more info</div><br><br>
+  
+<div id="chart"></div>
+  <script>
+
+var barH = 20
+var barW = 2
+var gap = 5
+
+Promise.all([d3.csv("amendments.csv")])
+.then(function(d){
+  const amendments =d[0]
+
+var BOS_topic = {
+"BOR":"(Bill of Rights) Abortion (parental notification, personhood amendments) Same-sex marriage bans and affirmations Eminent domain restrictions and reforms Victim rights and jury trial standards Affirmative action bans Right to hunt and fish Anti-health-care mandates Bail denial and judicial discretion Card-check and labor-related rights",
+"SUFF/ELECT":"(Suffrage & Elections) Redistricting reforms and independent commissions Voting rights (felon voting, age qualifications, citizenship requirements) Campaign finance regulations Voter ID laws Absentee and early voting provisions Initiative and referendum process changes Election administration and oversight",
+"EXEC":"(Executive Branch)",
+"LEG":"(Legislative Branch) Legislative term limits and salary rules Redistricting procedures Ethics commissions and transparency Legislative veto and emergency powers Session scheduling and bill filing rules",
+"JUD":"(Judicial Branch) Judicial conduct and eligibility Retirement age adjustments Judicial nomination and appointment processes Expansion of judicial duties and jurisdictions Bail and pretrial detention rules",
+"FIN":"(Finance & Taxation) Property tax exemptions and adjustments Budget rules and rainy day funds Sales and income tax changes Funding for education, transportation, and veterans Tax caps and homestead exemptions",
+"DEBT":"(State & Local Debt) Authorization of bonds for infrastructure, education, and conservation Economic development funding Debt classification and limitations Local government borrowing rules",
+"LOCAL":"(Local Government) Officeholding and term limits for local officials Local tax and bond measures Judicial appointments and school board governance Infrastructure and land use amendments County-specific amendments (e.g., toll roads, annexations)",
+"MISC":"(Miscellaneous) Legalization of marijuana and gambling Right to work and labor laws Environmental and land use provisions Civil service reforms Technical constitutional updates"
+}
+
+
+var BOS_labels = {
+"BOR":"Bill of Rights",
+"SUFF/ELECT":"Suffrage & Elections",
+"EXEC":"Executive Branch",
+"LEG":"Legislative Branch",
+"JUD":"Judicial Branch)",
+"FIN":"Finance & Taxation",
+"DEBT":"State & Local Debt",
+"LOCAL":"Local Government",
+"MISC":"Miscellaneous"}
+
+
+d3.select("#topics").selectAll(".topicButton")
+.data(Object.keys(BOS_topic))
+.join("div").attr("class","topicButton")
+.html(function(d){return BOS_labels[d]})
+.on("mouseover",function(e,d){
+  d3.selectAll("rect").attr("opacity",.1)
+  d3.selectAll("."+d.replace("/","_")).attr("opacity",1)
+  d3.selectAll(".topicButton").style("color","black").style("background-color","white")
+  d3.select(this).style("background-color","black").style("color","white")
+})
+.on("mouseout",function(e,d){
+    d3.selectAll("rect").attr("opacity",1)
+    d3.select(this).style("color","black").style("background-color","white")
+
+})
+  //timeline of state amendments 1 for each state
+  //color code for pass/fail
+  //rollover for popup on info: notes
+  //ability to highlight when rolling over a topic
+  //when you click on topic - collapse to show all amendments
+  
+
+
+  //data reorg
+  //group by state 
+  var byState = Object.groupBy(amendments,function(d){return d["state_postcode"]})
+
+  //group by state then by year
+  var byStateByYear = {}
+  for (var bs in byState){
+    var stateByYear = Object.groupBy(byState[bs],function(d){return d["year"]})
+    byStateByYear[bs]=stateByYear
+  }
+  //get list of states in alphabetical order
+  var states = Object.keys(byState).sort()
+
+  //draw chart
+  const svg = d3.select("#chart").append("svg").attr("width",1100).attr("height",1400)
+
+  for(var s in states){
+    drawState(svg,byState[states[s]],states[s],s)
+  }
+
+
+
+  //change x to timeline and back
+var tScale = d3.scaleLinear().domain([2005, 2026]).range([0,1000])
+
+var bScale = d3.scaleLinear().domain([0,300]).range([0,300*barW])
+
+  var timelineAxis = d3.axisTop().scale(tScale).tickFormat(function(d){return d+""})
+  var barAxis = d3.axisTop().scale(bScale).tickFormat(function(d){return d+""})
+      svg.append("g").attr("id","barAxis").attr("transform","translate(80,18)").call(barAxis)
+
+  d3.select("#timelineView").on("click",function(){
+  d3.select("#barAxis").remove()
+
+svg.append("g").attr("id","timelineAxis").attr("transform","translate(80,18)").call(timelineAxis)
+  var rects = d3.selectAll(".amendment")
+  .each(function(d,i){
+    var indexWithinYear = byStateByYear[d["state_postcode"]][d["year"]].indexOf(d)
+    var newX = tScale(d["year"])+indexWithinYear*barW
+    d3.select(this).transition().delay(i/10).attr("x",newX)
+  })
+  })
+
+  d3.select("#barchartView").on("click",function(){
+      svg.append("g").attr("id","barAxis").attr("transform","translate(80,20)").call(barAxis)
+  d3.select("#timelineAxis").remove()
+
+  var rects = d3.selectAll(".amendment")
+  .each(function(d,i){
+    var newX = d3.select(this).attr("barViewX")
+    d3.select(this).transition().delay(i/10).attr("x",function(d,i){
+  return newX
+})
+  })
+})
+
+
+
+})
+
+function drawState(svg, data,state,y){
+//console.log(state)
+var chart = svg.append("g").attr("transform","translate(80,20)")
+// chart.append("rect")
+// .attr("class","bg")
+// .attr("x",0)
+// .attr("y",y*barH)
+// .attr("width",600)
+// .attr("height",barH-gap)
+// .attr("fill","#EBEAE9")
+
+chart.append("text")
+.text(state)
+.attr("x",-30)
+.attr("y",y*barH+barH-gap)
+
+chart.selectAll("."+state)
+.data(data)
+.join("rect")
+.attr("height",barH-gap)
+.attr("width",barW-.5)
+.attr("class",function(d){
+  return state+" amendment "+d["BOS_topic"].replace("/","_")
+})
+.attr("barViewX",function(d,i){
+//// console.log(d,i)
+  return i*barW
+})
+.attr("x",function(d,i){
+//// console.log(d,i)
+  return i*barW
+})
+.attr("y",y*barH)
+.attr("fill",function(d){
+  if(d.passed=="1"){
+    return "#00415B"
+  }else{
+    return "#FFCF01"
+  }
+})
+.on("mouseout",function(e,d){
+  d3.select("#info").html("").style("visibility","hidden")
+  d3.select(this).attr("stroke","none//")
+
+})
+.on("mouseover",function(e,d){
+  d3.select(this).attr("stroke","black")
+  //initiative,BOS_topic,BOS_summary,passed,notes
+  d3.select("#info").style("left",e["offsetX"]+20+"px").style("top",(e["offsetY"]+40)+"px").style("visibility","visible")
+  d3.select("#info").html("State:"+d["state_postcode"]
+  +"<br><b>BOS_topic:</b> "+d["BOS_topic"]
+  +"<br>BOS_Summary: "+d["BOS_summary"]
+  +"<br>passed: "+d["passed"]
+  +"<br>year: "+d.year
+    +"<br>notes: "+d["notes"]
+  )
+})
+
+
+}
+
+  </script>
+
+</body>
+</html>
